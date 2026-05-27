@@ -2,7 +2,7 @@
 <img src="https://raw.githubusercontent.com/BEPb/BEPb/5c63fa170d1cbbb0b1974f05a3dbe6aca3f5b7f3/assets/Bottom_up.svg" width="100%" />
 
 <!-- PROFILE VIEW AND FOLLOWERS -->
-<p align="right">
+<p align=" right ">
   <img src="https://komarev.com/ghpvc/?username=dinalegw&label=Profile_views&color=0ED7FF&style=flat" alt="profile-views-count"/>
 </p>
 
@@ -46,10 +46,13 @@
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
+
+
 ## ✍️ C2 Favorite Quotes ♻️
 <div align="center">
   <h3 style="color: #ffd700; font-weight: bold;">"THE SOURCE OF WISDOM IS PAIN"</h3>
 </div>
+
 
 <div align="center">
   <img src="https://quotes-github-readme.vercel.app/api?type=horizontal&theme=radical" width="550px" alt="Random Dev Quote" />
