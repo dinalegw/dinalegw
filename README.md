@@ -2,7 +2,7 @@
 <img src="https://raw.githubusercontent.com/BEPb/BEPb/5c63fa170d1cbbb0b1974f05a3dbe6aca3f5b7f3/assets/Bottom_up.svg" width="100%" />
 
 <!-- PROFILE VIEW AND FOLLOWERS -->
-<p align=" right ">
+<p align=" right">
   <img src="https://komarev.com/ghpvc/?username=dinalegw&label=Profile_views&color=0ED7FF&style=flat" alt="profile-views-count"/>
 </p>
 
