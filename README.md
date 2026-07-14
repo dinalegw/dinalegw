@@ -40,7 +40,7 @@
 ## 🏆 GitHub Trophies
 <p align="left" style="vertical-align:top; margin:4px;">
     <a href="https://github.com/0x5b62656e5d/github-profile-trophy" style="margin: 10px;">
-        <img src="https://trophy.benkou.dev/?username=dinalegw&margin-w=15&margin-h=15&theme=onestar&column=10&no-frame=true" alt="dinalegw GitHub trophies" />
+        <img src="https://trophy.benkou.dev/?username=dinalegw&margin-w=15&margin-h=15&theme=onestar&column=9&no-frame=true" alt="dinalegw GitHub trophies" />
     </a> 
 </p>
 
