@@ -39,9 +39,9 @@
 
 ## 🏆 GitHub Trophies
 <p align="left" style="vertical-align:top; margin:4px;">
-  <a href="https://github.com/ryo-ma/github-profile-trophy" style="margin: 10px;">
-    <img src="./profile/trophy.svg" alt="dinalegw GitHub trophies" />
-  </a>
+    <a href="https://github.com/0x5b62656e5d/github-profile-trophy" style="margin: 10px;">
+        <img src="https://trophy.benkou.dev/?username=dinalegw&margin-w=15&margin-h=15&theme=onestar&column=9&no-frame=true" alt="dinalegw GitHub trophies" />
+    </a> 
 </p>
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
