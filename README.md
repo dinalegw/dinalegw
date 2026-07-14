@@ -3,7 +3,7 @@
 
 <!-- PROFILE VIEW AND FOLLOWERS -->
 <p align="right">
-  <img src="https://komarev.com/ghpvc/?username=dinalegw&label=Profile_views&color=0ED7FF&style=flat" alt="profile-views-count"/>
+  <img src="https://visitcount.itsvg.in/api?id=dinalegw&label=Profile%20Views&color=0ED7FF&icon=0&pretty=true" alt="profile-views-count"/>
 </p>
 
 <!-- QUICK INTRO ABOUT ME -->
@@ -27,13 +27,13 @@
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
 ## 📊 Statistics
-<img align="left" src="http://github-profile-summary-cards.vercel.app/api/cards/stats?username=dinalegw&theme=blueberry" width="46%" />
+<img align="left" src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=dinalegw&theme=blueberry" width="46%" />
 <img align="right" src="https://streak-stats.vercel.app/?user=dinalegw&theme=blueberry&hide_border=true&card_height=250&background=0d1117" width="46%" alt="GitHub Streak" />
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
-<img align="left" src="http://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=dinalegw&theme=blueberry" width="47%" />
-<img align="right" src="http://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=dinalegw&theme=blueberry" width="47%" />
+<img align="left" src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=dinalegw&theme=blueberry" width="47%" />
+<img align="right" src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=dinalegw&theme=blueberry" width="47%" />
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
-<img src="http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=dinalegw&theme=github_dark" style="height: 300px"/>
+<img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=dinalegw&theme=github_dark" style="height: 300px"/>
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
