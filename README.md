@@ -3,7 +3,7 @@
 
 <!-- PROFILE VIEW AND FOLLOWERS -->
 <p align="right">
-  <img src="https://visitcount.itsvg.in/api?id=dinalegw&label=Profile%20Views&color=0ED7FF&icon=0&pretty=true" alt="profile-views-count"/>
+  <img src="https://profile-view-counter.tashfiq61.workers.dev/api/view-counter?username=dinalegw" alt="profile-views-count"/>
 </p>
 
 <!-- QUICK INTRO ABOUT ME -->
