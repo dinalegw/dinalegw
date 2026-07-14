@@ -3,7 +3,7 @@
 
 <!-- PROFILE VIEW AND FOLLOWERS -->
 <p align="right">
-  <img src="https://profile-view-counter.tashfiq61.workers.dev/api/view-counter?username=dinalegw" alt="profile-views-count"/>
+  <img src="https://github-view-counter.vercel.app/api?username=dinalegw&base=2000&label=Profile%20Views&color=0ED7FF&style=flat&icon=false" alt="profile-views-count"/>
 </p>
 
 <!-- QUICK INTRO ABOUT ME -->
