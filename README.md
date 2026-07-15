@@ -4,6 +4,7 @@
 <!-- PROFILE VIEW AND FOLLOWERS -->
 <p align="right">
   <img src="https://github-view-counter.vercel.app/api?username=dinalegw&base=2000&label=Profile%20views&color=ffffff&labelColor=ffffff&bgColor=0ED7FF&labelBgColor=555555&style=flat&icon=false&layout=split&size=11" alt="profile-views-count"/>
+  <img src="profile/views.svg?v=0" alt="self-hosted-profile-views"/>
 </p>
 
 <!-- QUICK INTRO ABOUT ME -->

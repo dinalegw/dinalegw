@@ -1,0 +1,67 @@
+name: Profile views counter
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  count:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bump view count
+        run: |
+          node -e '
+            const fs = require("fs");
+            const p = "profile/views.json";
+            const data = JSON.parse(fs.readFileSync(p, "utf8"));
+            data.total += 1;
+            data.updatedAt = new Date().toISOString();
+            fs.writeFileSync(p, JSON.stringify(data, null, 2) + "\n");
+          '
+
+      - name: Render SVG badge
+        run: |
+          node -e '
+            const fs = require("fs");
+            const data = JSON.parse(fs.readFileSync("profile/views.json", "utf8"));
+            const count = data.total.toLocaleString("en-US");
+            const w = 86 + count.length * 7.5;
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="20" role="img" aria-label="profile views">
+              <linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#555" stop-opacity=".25"/><stop offset="1" stop-opacity=".25"/></linearGradient>
+              <mask id="a"><rect width="${w}" height="20" rx="3" fill="#fff"/></mask>
+              <g mask="url(#a)">
+                <rect width="62" height="20" fill="#555"/>
+                <rect x="62" width="${w - 62}" height="20" fill="#0ED7FF"/>
+                <rect width="${w}" height="20" fill="url(#b)"/>
+              </g>
+              <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,sans-serif" font-size="11">
+                <text x="31" y="14">profile views</text>
+                <text x="${62 + (w - 62) / 2}" y="14">${count}</text>
+              </g>
+            </svg>`;
+            fs.writeFileSync("profile/views.svg", svg);
+          '
+
+      - name: Cache-bust README badge
+        run: |
+          node -e '
+            const fs = require("fs");
+            const data = JSON.parse(fs.readFileSync("profile/views.json", "utf8"));
+            let md = fs.readFileSync("README.md", "utf8");
+            md = md.replace(/profile\/views\.svg\?v=\d+/, "profile/views.svg?v=" + data.total);
+            fs.writeFileSync("README.md", md);
+          '
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add profile/views.json profile/views.svg README.md
+          git commit -m "chore: bump profile views [skip ci]" || exit 0
+          git push
