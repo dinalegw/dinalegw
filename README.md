@@ -1,10 +1,9 @@
 <!-- DINA LEGW IMAGE HERO -->
 <img src="https://raw.githubusercontent.com/BEPb/BEPb/5c63fa170d1cbbb0b1974f05a3dbe6aca3f5b7f3/assets/Bottom_up.svg" width="100%" />
 
-<!-- PROFILE VIEW AND FOLLOWERS -->
+<!-- PROFILE VIEWS -->
 <p align="right">
-  <img src="https://github-view-counter.vercel.app/api?username=dinalegw&base=2000&label=Profile%20views&color=ffffff&labelColor=ffffff&bgColor=0ED7FF&labelBgColor=555555&style=flat&icon=false&layout=split&size=11" alt="profile-views-count"/>
-  <img src="profile/views.svg?v=0" alt="self-hosted-profile-views"/>
+  <img src="profile/views.svg?v=1" alt="Profile views"/>
 </p>
 
 <!-- QUICK INTRO ABOUT ME -->
