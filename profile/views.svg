@@ -1,13 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="93.5" height="20" role="img" aria-label="profile views">
+<svg xmlns="http://www.w3.org/2000/svg" width="132" height="20" role="img" aria-label="Profile Views">
   <linearGradient id="b" x2="0" y2="100%"><stop offset="0" stop-color="#555" stop-opacity=".25"/><stop offset="1" stop-opacity=".25"/></linearGradient>
-  <mask id="a"><rect width="93.5" height="20" rx="3" fill="#fff"/></mask>
+  <mask id="a"><rect width="132" height="20" rx="3" fill="#fff"/></mask>
   <g mask="url(#a)">
-    <rect width="62" height="20" fill="#555"/>
-    <rect x="62" width="31.5" height="20" fill="#0ED7FF"/>
-    <rect width="93.5" height="20" fill="url(#b)"/>
+    <rect width="78" height="20" fill="#555"/>
+    <rect x="78" width="54" height="20" fill="#0ED7FF"/>
+    <rect width="132" height="20" fill="url(#b)"/>
   </g>
   <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,sans-serif" font-size="11">
-    <text x="31" y="14">profile views</text>
-    <text x="77.75" y="14">1</text>
+    <text x="39" y="14">Profile Views</text>
+    <text x="105" y="14">2,445</text>
   </g>
 </svg>
