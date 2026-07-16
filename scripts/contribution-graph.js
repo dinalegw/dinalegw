@@ -62,8 +62,8 @@ for (let i = 0; i < totalDays; i++) {
 
 const totalContributions = Object.values(commitsByDate).reduce((a, b) => a + b, 0);
 
-const W = 760, H = 240;
-const pad = { top: 30, right: 20, bottom: 35, left: 50 };
+const W = 760, H = 260;
+const pad = { top: 30, right: 20, bottom: 52, left: 68 };
 const chartW = W - pad.left - pad.right;
 const chartH = H - pad.top - pad.bottom;
 
@@ -124,6 +124,12 @@ for (const ml of monthLabels) {
   const x = (ml.index / (days.length - 1)) * chartW;
   svg += `<text x="${x}" y="${chartH + 16}" fill="#8b949e" font-size="10" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">${ml.label}</text>`;
 }
+
+// Y-axis label
+svg += `<text x="-12" y="${chartH / 2}" fill="#8b949e" font-size="11" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" transform="rotate(-90, -12, ${chartH / 2})">Commits</text>`;
+
+// X-axis label
+svg += `<text x="${chartW / 2}" y="${chartH + 34}" fill="#8b949e" font-size="11" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">Months</text>`;
 
 svg += `<path d="${areaPath}" fill="url(#areaGrad)"/>`;
 svg += `<path d="${linePath}" fill="none" stroke="url(#lineGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
