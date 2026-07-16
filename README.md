@@ -34,7 +34,7 @@
   <img src="https://github-readme-stats-livid-two-25.vercel.app/api/top-langs?username=dinalegw&theme=blueberry&layout=compact" alt="Top Languages" />
 </p>
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
-<img src="https://github-readme-activity-graph.vercel.app/graph?username=dinalegw&theme=github-dark" alt="Contribution Graph" />
+<img src="profile/contribution-graph.svg" alt="Contribution Graph" />
 
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 

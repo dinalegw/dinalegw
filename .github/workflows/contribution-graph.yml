@@ -1,0 +1,100 @@
+name: Update contribution graph
+
+on:
+  push:
+    branches: [main, master]
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate contribution graph SVG
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node << 'EOF'
+          const fs = require('fs'), https = require('https');
+          const username = 'dinalegw';
+          const CELL = 11, GAP = 3, STEP = CELL + GAP, LEFT = 44, TOP = 36, ROWS = 7, PAD = 16;
+
+          function query(token) {
+            const q = JSON.stringify({
+              query: `query($u:String!,$f:DateTime!,$t:DateTime!){user(login:$u){contributionsCollection(from:$f,to:$t){contributionCalendar{totalContributions weeks{contributionDays{contributionCount date color weekday}}}}}}`,
+              variables: { u: username, f: new Date(Date.now() - 31536000000).toISOString(), t: new Date().toISOString() }
+            });
+            return new Promise((res, rej) => {
+              const r = https.request({ hostname: 'api.github.com', path: '/graphql', method: 'POST', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', 'User-Agent': 'cg' } }, resp => { let d = ''; resp.on('data', c => d += c); resp.on('end', () => { try { res(JSON.parse(d)) } catch (e) { rej(e) } }) });
+              r.on('error', rej); r.write(q); r.end();
+            });
+          }
+
+          (async () => {
+            const data = await query(process.env.GITHUB_TOKEN);
+            if (!data.data) throw new Error('GitHub API returned no data: ' + JSON.stringify(data.errors));
+            const cal = data.data.user.contributionsCollection.contributionCalendar;
+            const weeks = cal.weeks;
+            const cols = weeks.length;
+            const W = LEFT + cols * STEP + PAD, H = TOP + ROWS * STEP + 28;
+
+            // Month labels: find which column contains the 1st of each month
+            const months = [];
+            for (let c = 0; c < cols; c++) {
+              for (const day of weeks[c].contributionDays) {
+                const d = new Date(day.date);
+                if (d.getDate() === 1) {
+                  const m = d.toLocaleString('en', { month: 'short' });
+                  if (!months.length || months[months.length - 1].label !== m) months.push({ col: c, label: m });
+                  break;
+                }
+              }
+            }
+
+            // Day label rows: Mon(1), Wed(3), Fri(5) — mapped to SVG rows via (weekday + 6) % 7
+            const dayRows = [
+              { w: 1, l: 'Mon' }, { w: 3, l: 'Wed' }, { w: 5, l: 'Fri' }
+            ];
+
+            let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
+            <rect width="${W}" height="${H}" fill="#0d1117" rx="6"/>
+            <g transform="translate(${LEFT},${TOP})">
+              <text x="0" y="-12" fill="#8b949e" font-size="12" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">${cal.totalContributions.toLocaleString()} contributions in the last year</text>`;
+
+            for (const m of months) svg += `<text x="${m.col * STEP}" y="-2" fill="#8b949e" font-size="10" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">${m.label}</text>`;
+
+            for (const dl of dayRows) svg += `<text x="-8" y="${((dl.w + 6) % 7) * STEP + CELL - 2}" fill="#8b949e" font-size="10" text-anchor="end" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">${dl.l}</text>`;
+
+            for (let c = 0; c < cols; c++) {
+              for (const day of weeks[c].contributionDays) {
+                const r = (day.weekday + 6) % 7;
+                svg += `<rect x="${c * STEP}" y="${r * STEP}" width="${CELL}" height="${CELL}" fill="${day.contributionCount > 0 ? day.color : '#161b22'}" rx="2"/>`;
+              }
+            }
+
+            // Legend
+            const lColors = ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'];
+            svg += `<g transform="translate(${cols * STEP - 92},${ROWS * STEP + 10})">
+              <text fill="#8b949e" font-size="10" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">Less</text>`;
+            for (let i = 0; i < lColors.length; i++) svg += `<rect x="${36 + i * 14}" y="0" width="${CELL}" height="${CELL}" fill="${lColors[i]}" rx="2"/>`;
+            svg += `<text x="${36 + lColors.length * 14 + 4}" y="${CELL - 1}" fill="#8b949e" font-size="10" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">More</text>
+            </g></g></svg>`;
+
+            fs.writeFileSync('profile/contribution-graph.svg', svg);
+            console.log('Contribution graph generated successfully');
+          })().catch(e => { console.error(e); process.exit(1); });
+          EOF
+
+      - name: Commit contribution graph
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add profile/contribution-graph.svg
+          git commit -m "Update contribution graph [skip ci]" || exit 0
+          git push
