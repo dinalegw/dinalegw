@@ -6,9 +6,6 @@ const ROOT = '/home/l2euser';
 const OUTPUT = path.join(ROOT, 'dinalegw', 'profile', 'contribution-graph.svg');
 const NUM_DAYS = 365;
 
-const CELL = 11, GAP = 3, STEP = CELL + GAP, LEFT = 44, TOP = 36, ROWS = 7, PAD = 16;
-
-// Collect commit dates from all git repos
 const commitsByDate = {};
 
 function walk(dir) {
@@ -26,113 +23,121 @@ function walk(dir) {
           for (const date of log.trim().split('\n')) {
             if (date) commitsByDate[date] = (commitsByDate[date] || 0) + 1;
           }
-        } catch (e) {
-          // skip repos with errors
-        }
-        return; // don't recurse into .git
+        } catch (e) {}
+        return;
       }
       if (entry.isDirectory() && !entry.name.startsWith('.') && entry.name !== 'node_modules') {
         walk(full);
       }
     }
-  } catch (e) {
-    // skip inaccessible directories
-  }
+  } catch (e) {}
 }
 
 walk(ROOT);
 
-// Build the weeks array (53 weeks x 7 days)
+// Build daily contribution array
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 const startDate = new Date(today);
 startDate.setDate(startDate.getDate() - NUM_DAYS + 1);
 
-// Fill in days with contributions
-const dayData = {};
+const days = [];
+let maxCount = 0;
 for (let i = 0; i < NUM_DAYS; i++) {
   const d = new Date(startDate);
   d.setDate(d.getDate() + i);
   const key = d.toISOString().split('T')[0];
-  dayData[key] = { count: commitsByDate[key] || 0, date: key };
+  const count = commitsByDate[key] || 0;
+  if (count > maxCount) maxCount = count;
+  days.push({ date: d, key, count });
 }
 
-// Group into weeks (Sun-Sat, starting from the first Sunday >= startDate)
-const weeks = [];
-let cursor = new Date(startDate);
-// Adjust to the nearest previous Sunday
-cursor.setDate(cursor.getDate() - cursor.getDay());
-
-while (cursor <= today) {
-  const weekDays = [];
-  for (let wd = 0; wd < 7; wd++) {
-    const d = new Date(cursor);
-    d.setDate(d.getDate() + wd);
-    const key = d.toISOString().split('T')[0];
-    const count = commitsByDate[key] || 0;
-    const weekday = d.getDay(); // 0=Sun, 6=Sat
-    const color = count === 0 ? '#161b22'
-      : count <= 2 ? '#0e4429'
-      : count <= 5 ? '#006d32'
-      : count <= 10 ? '#26a641'
-      : '#39d353';
-    weekDays.push({ contributionCount: count, date: key, color, weekday });
-  }
-  weeks.push({ contributionDays: weekDays });
-  cursor.setDate(cursor.getDate() + 7);
-}
-
-const cols = weeks.length;
-
-// Compute total
 const totalContributions = Object.values(commitsByDate).reduce((a, b) => a + b, 0);
 
-// Month labels
-const months = [];
-for (let c = 0; c < cols; c++) {
-  for (const day of weeks[c].contributionDays) {
-    const d = new Date(day.date);
-    if (d.getDate() === 1) {
-      const m = d.toLocaleString('en', { month: 'short' });
-      if (!months.length || months[months.length - 1].label !== m) months.push({ col: c, label: m });
-      break;
+// Chart dimensions
+const W = 760, H = 240;
+const pad = { top: 30, right: 20, bottom: 35, left: 50 };
+const chartW = W - pad.left - pad.right;
+const chartH = H - pad.top - pad.bottom;
+
+// Y-axis ticks
+const yMax = Math.max(maxCount, 5);
+const yTicks = [];
+const tickStep = Math.ceil(yMax / 4);
+for (let i = 0; i <= 4; i++) yTicks.push(tickStep * i);
+
+// Month labels on x-axis
+const monthLabels = [];
+for (let i = 0; i < days.length; i++) {
+  const d = days[i].date;
+  if (d.getDate() === 1 || i === 0) {
+    const m = d.toLocaleString('en', { month: 'short' });
+    if (!monthLabels.length || monthLabels[monthLabels.length - 1].label !== m) {
+      monthLabels.push({ index: i, label: m });
     }
   }
 }
 
-// Day label rows: Mon(1), Wed(3), Fri(5)
-const dayRows = [
-  { w: 1, l: 'Mon' }, { w: 3, l: 'Wed' }, { w: 5, l: 'Fri' }
-];
-
-const W = LEFT + cols * STEP + PAD;
-const H = TOP + ROWS * STEP + 28;
-
 let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
-<rect width="${W}" height="${H}" fill="#0d1117" rx="6"/>
-<g transform="translate(${LEFT},${TOP})">
-  <text x="0" y="-12" fill="#8b949e" font-size="12" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">${totalContributions.toLocaleString()} contributions in the last year</text>`;
+<defs>
+  <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#39d353" stop-opacity="0.4"/>
+    <stop offset="100%" stop-color="#39d353" stop-opacity="0.02"/>
+  </linearGradient>
+  <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#26a641"/>
+    <stop offset="50%" stop-color="#39d353"/>
+    <stop offset="100%" stop-color="#39d353"/>
+  </linearGradient>
+</defs>
+<rect width="${W}" height="${H}" fill="#0d1117" rx="8"/>
+<g transform="translate(${pad.left},${pad.top})">
+  <text x="0" y="-8" fill="#8b949e" font-size="13" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-weight="600">${totalContributions.toLocaleString()} Contributions in the Last Year</text>`;
 
-for (const m of months) svg += `<text x="${m.col * STEP}" y="-2" fill="#8b949e" font-size="10" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">${m.label}</text>`;
+// Y-axis grid lines and labels
+for (const tick of yTicks) {
+  const y = chartH - (tick / yMax) * chartH;
+  svg += `<line x1="0" y1="${y}" x2="${chartW}" y2="${y}" stroke="#21262d" stroke-width="1"/>`;
+  svg += `<text x="-8" y="${y + 4}" fill="#8b949e" font-size="10" text-anchor="end" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">${tick}</text>`;
+}
 
-for (const dl of dayRows) svg += `<text x="-8" y="${((dl.w + 6) % 7) * STEP + CELL - 2}" fill="#8b949e" font-size="10" text-anchor="end" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">${dl.l}</text>`;
+// X-axis month labels
+for (const ml of monthLabels) {
+  const x = (ml.index / (days.length - 1)) * chartW;
+  svg += `<text x="${x}" y="${chartH + 16}" fill="#8b949e" font-size="10" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">${ml.label}</text>`;
+}
 
-for (let c = 0; c < cols; c++) {
-  for (const day of weeks[c].contributionDays) {
-    const r = (day.weekday + 6) % 7;
-    svg += `<rect x="${c * STEP}" y="${r * STEP}" width="${CELL}" height="${CELL}" fill="${day.contributionCount > 0 ? day.color : '#161b22'}" rx="2"/>`;
+// Build path data
+let linePath = '';
+let areaPath = '';
+for (let i = 0; i < days.length; i++) {
+  const x = (i / (days.length - 1)) * chartW;
+  const y = chartH - (days[i].count / yMax) * chartH;
+  if (i === 0) {
+    linePath += `M ${x} ${y}`;
+    areaPath += `M ${x} ${chartH} L ${x} ${y}`;
+  } else {
+    linePath += ` L ${x} ${y}`;
+    areaPath += ` L ${x} ${y}`;
+  }
+}
+areaPath += ` L ${chartW} ${chartH} Z`;
+
+svg += `<path d="${areaPath}" fill="url(#areaGrad)"/>`;
+svg += `<path d="${linePath}" fill="none" stroke="url(#lineGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+// Data dots
+for (let i = 0; i < days.length; i++) {
+  if (days[i].count > 0) {
+    const x = (i / (days.length - 1)) * chartW;
+    const y = chartH - (days[i].count / yMax) * chartH;
+    svg += `<circle cx="${x}" cy="${y}" r="2.5" fill="#39d353" opacity="0.8"/>`;
   }
 }
 
-const lColors = ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'];
-svg += `<g transform="translate(${cols * STEP - 92},${ROWS * STEP + 10})">
-  <text fill="#8b949e" font-size="10" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">Less</text>`;
-for (let i = 0; i < lColors.length; i++) svg += `<rect x="${36 + i * 14}" y="0" width="${CELL}" height="${CELL}" fill="${lColors[i]}" rx="2"/>`;
-svg += `<text x="${36 + lColors.length * 14 + 4}" y="${CELL - 1}" fill="#8b949e" font-size="10" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">More</text>
-</g></g></svg>`;
+svg += `</g></svg>`;
 
 fs.mkdirSync(path.dirname(OUTPUT), { recursive: true });
 fs.writeFileSync(OUTPUT, svg);
-console.log(`Contribution graph generated at ${OUTPUT}`);
-console.log(`Total commits in last year: ${totalContributions}`);
-console.log(`Weeks: ${cols}, Repos scanned: ${Object.keys(commitsByDate).length > 0 ? 'data found' : 'no data'}`);
+console.log(`Line chart generated at ${OUTPUT}`);
+console.log(`Total commits: ${totalContributions}, Max in a day: ${maxCount}`);
