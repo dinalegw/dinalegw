@@ -178,24 +178,32 @@ for (; idx >= 0; idx--) {
   } else break;
 }
 
-const SW = 760, SH = 176, colW = SW / 3;
-const blocks = [
-  { cx: colW / 2, val: totalContributions.toLocaleString(), label: 'Total Contributions', sub: firstContrib ? `${fmtDate(firstContrib)} - Present` : '' },
-  { cx: colW + colW / 2, val: currentStreak.toLocaleString(), label: 'Current Streak', sub: currentStreakStart ? fmtDate(currentStreakStart) : 'No contributions yet' },
-  { cx: 2 * colW + colW / 2, val: longestStreak.toLocaleString(), label: 'Longest Streak', sub: longestStreakStart ? `${fmtDate(longestStreakStart)} - ${fmtDate(longestStreakEnd)}` : 'No contributions yet' }
+const SW = 760, SH = 240, colW = SW / 3;
+const c1 = colW / 2, c2 = colW + colW / 2, c3 = 2 * colW + colW / 2;
+const numY = 95, numFont = 40;
+const labelY = [140, 175, 140], labelFont = 18;
+const subY = [170, 205, 170], subFont = 14;
+const flame = 'M 249 20.17 C 249 20.17 249.74 22.82 249.74 24.97 C 249.74 27.03 248.39 28.7 246.33 28.7 C 244.26 28.7 242.7 27.03 242.7 24.97 L 242.73 24.61 C 240.71 27.01 239.5 30.12 239.5 33.5 C 239.5 37.92 243.08 41.5 247.5 41.5 C 251.92 41.5 255.5 37.92 255.5 33.5 C 255.5 28.11 252.91 23.3 249 20.17 Z M 247.21 38.5 C 245.43 38.5 243.99 37.1 243.99 35.36 C 243.99 33.74 245.04 32.6 246.8 32.24 C 248.57 31.88 250.4 31.03 251.42 29.66 C 251.81 30.95 252.01 32.31 252.01 33.7 C 252.01 36.35 249.86 38.5 247.21 38.5 Z';
+const stats = [
+  { cx: c1, val: totalContributions.toLocaleString(), label: 'Total Contributions', sub: firstContrib ? `${fmtDate(firstContrib)} - Present` : '' },
+  { cx: c2, val: currentStreak.toLocaleString(), label: 'Current Streak', sub: currentStreakStart ? fmtDate(currentStreakStart) : 'No contributions yet' },
+  { cx: c3, val: longestStreak.toLocaleString(), label: 'Longest Streak', sub: longestStreakStart ? `${fmtDate(longestStreakStart)} - ${fmtDate(longestStreakEnd)}` : 'No contributions yet' }
 ];
 let svg2 = `<svg xmlns="http://www.w3.org/2000/svg" width="${SW}" height="${SH}">
 <rect width="${SW}" height="${SH}" fill="#0d1117" rx="8"/>
-<line x1="${colW}" y1="18" x2="${colW}" y2="${SH-18}" stroke="#21262d" stroke-width="1"/>
-<line x1="${2*colW}" y1="18" x2="${2*colW}" y2="${SH-18}" stroke="#21262d" stroke-width="1"/>`;
-for (const b of blocks) {
+<line x1="${colW}" y1="25" x2="${colW}" y2="205" stroke="#30363d" stroke-width="2"/>
+<line x1="${2*colW}" y1="25" x2="${2*colW}" y2="205" stroke="#30363d" stroke-width="2"/>
+<circle cx="${c2}" cy="${numY}" r="55" fill="none" stroke="#39d353" stroke-width="5"/>
+<path d="${flame}" transform="translate(8.75,-12.5) scale(1.5)" fill="#f78166"/>`;
+for (let i = 0; i < stats.length; i++) {
+  const b = stats[i];
   svg2 += `
-<text x="${b.cx}" y="52" fill="#39d353" font-size="34" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-weight="700">${b.val}</text>
-<text x="${b.cx}" y="82" fill="#8b949e" font-size="13" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">${b.label}</text>
-<text x="${b.cx}" y="118" fill="#8b949e" font-size="11" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">${b.sub}</text>`;
+<text x="${b.cx}" y="${numY}" fill="#39d353" font-size="${numFont}" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-weight="700">${b.val}</text>
+<text x="${b.cx}" y="${labelY[i]}" fill="#8b949e" font-size="${labelFont}" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">${b.label}</text>
+<text x="${b.cx}" y="${subY[i]}" fill="#8b949e" font-size="${subFont}" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">${b.sub}</text>`;
 }
 svg2 += `
-<text x="${SW/2}" y="${SH-12}" fill="#e6edf3" font-size="11" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">Contributions measured in UTC</text>
+<text x="${SW/2}" y="${SH-12}" fill="#e6edf3" font-size="13" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">Contributions measured in UTC</text>
 </svg>`;
 
 fs.mkdirSync(path.dirname(OUTPUT), { recursive: true });
