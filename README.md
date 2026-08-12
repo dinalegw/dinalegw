@@ -28,7 +28,7 @@
 
 ## 📊 Statistics
 <img align="left" src="https://github-readme-stats-livid-two-25.vercel.app/api?username=dinalegw&theme=blueberry&show_icons=true" width="46%" alt="GitHub Stats" />
-<img align="right" src="https://streak-stats.vercel.app/?user=dinalegw&theme=blueberry&hide_border=true&card_height=250&background=0d1117" width="46%" alt="GitHub Streak" />
+<img align="right" src="profile/streak-stats.svg" width="46%" alt="GitHub Streak" />
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 <p align="center">
   <img src="https://github-readme-stats-livid-two-25.vercel.app/api/top-langs?username=dinalegw&theme=blueberry&layout=compact" alt="Top Languages" />

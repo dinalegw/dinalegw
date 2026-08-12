@@ -126,10 +126,10 @@ for (const ml of monthLabels) {
 }
 
 // Y-axis label
-svg += `<text x="-12" y="${chartH / 2}" fill="#8b949e" font-size="11" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" transform="rotate(-90, -12, ${chartH / 2})">Commits</text>`;
+svg += `<text x="-16" y="${chartH / 2}" fill="#e6edf3" font-size="12" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-weight="600" transform="rotate(-90, -16, ${chartH / 2})">Commits per Day</text>`;
 
 // X-axis label
-svg += `<text x="${chartW / 2}" y="${chartH + 34}" fill="#8b949e" font-size="11" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">Months</text>`;
+svg += `<text x="${chartW / 2}" y="${chartH + 34}" fill="#e6edf3" font-size="12" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-weight="600">Time (Months)</text>`;
 
 svg += `<path d="${areaPath}" fill="url(#areaGrad)"/>`;
 svg += `<path d="${linePath}" fill="none" stroke="url(#lineGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
@@ -144,7 +144,63 @@ for (let i = 0; i < days.length; i++) {
 
 svg += `</g></svg>`;
 
+const fmtDate = (iso) => {
+  const d = new Date(iso + 'T00:00:00Z');
+  return d.toLocaleString('en', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+};
+const isoKey = (d) => d.toISOString().slice(0, 10);
+
+let currentStreak = 0, currentStreakStart = '', currentStreakEnd = '';
+let longestStreak = 0, longestStreakStart = '', longestStreakEnd = '';
+let run = 0, runStart = '';
+let firstContrib = '';
+for (const day of days) {
+  if (day.count > 0) {
+    if (!firstContrib) firstContrib = day.key;
+    if (run === 0) runStart = day.key;
+    run++;
+    if (run > longestStreak) {
+      longestStreak = run;
+      longestStreakStart = runStart;
+      longestStreakEnd = day.key;
+    }
+  } else {
+    run = 0;
+  }
+}
+let idx = days.length - 1;
+while (idx >= 0 && days[idx].count === 0) idx--;
+for (; idx >= 0; idx--) {
+  if (days[idx].count > 0) {
+    currentStreak++;
+    currentStreakStart = days[idx].key;
+    if (currentStreak === 1) currentStreakEnd = currentStreakStart;
+  } else break;
+}
+
+const SW = 760, SH = 176, colW = SW / 3;
+const blocks = [
+  { cx: colW / 2, val: totalContributions.toLocaleString(), label: 'Total Contributions', sub: firstContrib ? `${fmtDate(firstContrib)} - Present` : '' },
+  { cx: colW + colW / 2, val: currentStreak.toLocaleString(), label: 'Current Streak', sub: currentStreakStart ? fmtDate(currentStreakStart) : 'No contributions yet' },
+  { cx: 2 * colW + colW / 2, val: longestStreak.toLocaleString(), label: 'Longest Streak', sub: longestStreakStart ? `${fmtDate(longestStreakStart)} - ${fmtDate(longestStreakEnd)}` : 'No contributions yet' }
+];
+let svg2 = `<svg xmlns="http://www.w3.org/2000/svg" width="${SW}" height="${SH}">
+<rect width="${SW}" height="${SH}" fill="#0d1117" rx="8"/>
+<line x1="${colW}" y1="18" x2="${colW}" y2="${SH-18}" stroke="#21262d" stroke-width="1"/>
+<line x1="${2*colW}" y1="18" x2="${2*colW}" y2="${SH-18}" stroke="#21262d" stroke-width="1"/>`;
+for (const b of blocks) {
+  svg2 += `
+<text x="${b.cx}" y="52" fill="#39d353" font-size="34" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-weight="700">${b.val}</text>
+<text x="${b.cx}" y="82" fill="#8b949e" font-size="13" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">${b.label}</text>
+<text x="${b.cx}" y="118" fill="#8b949e" font-size="11" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">${b.sub}</text>`;
+}
+svg2 += `
+<text x="${SW/2}" y="${SH-12}" fill="#e6edf3" font-size="11" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">Contributions measured in UTC</text>
+</svg>`;
+
 fs.mkdirSync(path.dirname(OUTPUT), { recursive: true });
 fs.writeFileSync(OUTPUT, svg);
+fs.writeFileSync(path.join(ROOT, 'dinalegw', 'profile', 'streak-stats.svg'), svg2);
 console.log(`Line chart from ${startDate.toISOString().split('T')[0]} to today (${totalDays} days)`);
 console.log(`Total: ${totalContributions}, Max/day: ${maxCount}`);
+console.log(`Current streak: ${currentStreak}, Longest streak: ${longestStreak}`);
