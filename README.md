@@ -58,9 +58,3 @@
 </div>
 <img src="https://raw.githubusercontent.com/Trilokia/Trilokia/379277808c61ef204768a61bbc5d25bc7798ccf1/bottom_header.svg">
 
-
-## 🌍 Language & translation
-
-GitHub profile READMEs are static Markdown, so GitHub does not run JavaScript here. That means a live translate.js language selector cannot safely operate inside this profile page.
-
-For a live language switcher, visit the [GitPulse website](https://start-gitpulse.vercel.app). The reusable integration guide is available in [GitPulse translate.js documentation](https://github.com/dinalegw/GitPulse/blob/main/docs/translate-js.md).
